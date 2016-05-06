@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="en" ng-app="myApp" ng-controller="formCtrl">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title></title>
+</head>
+
+<body>
+
+    <h3>First Name: </h3>
+    <input type="text" ng-model="enrollObj.Firstname">
+    <h3>Last Name: </h3>
+    <input type="text" ng-model="enrollObj.Lastname">
+    <h3>Gender</h3>
+    <input type="text" name="Gender" ng-model="enrollObj.Gender">
+    <h3>Nationality</h3>
+    <input type="text" name="Nationality" ng-model="enrollObj.Nationality"><br/>
+    <button class="btn btn-default" ng-click="save()">next</button>
+    <button class="btn btn-default" ng-click="enroll()">Enroll</button>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('formCtrl', function($scope, $http){
+            $scope.enrollObj = {};
+            $scope.enroll = function(){
+                console.log(JSON.stringify($scope.enrollObj));
+                $http({
+                    method: 'POST',
+                    url: '/enroll',
+                    headers: {
+                        'Content-Type': undefined
+                    },
+                    data: $scope.enrollObj
+                }).then(function successCallback(response){                  
+                    console.log("dataSet: " + JSON.stringify(response.data));
+                }, function errorCallback(reponse){
+                    console.log(response);
+                });
+            };
+            
+             $scope.save = function(){
+                console.log(JSON.stringify($scope.enrollObj));
+                $http({
+                    method: 'POST',
+                    url: '/save',
+                    headers: {
+                        'Content-Type': undefined
+                    },
+                    data: $scope.enrollObj
+                }).then(function successCallback(response){
+                    console.log("data: " + JSON.stringify(response.data));
+                }, function errorCallback(reponse){
+                    console.log(response);
+                });
+            };
+        });
+    </script>
+</body>
+
+
+</html>

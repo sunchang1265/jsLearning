@@ -2,6 +2,7 @@ console.log('Node is installed!');
 var http = require('http');
 var server = http.createServer();
 server.on('request', function (request, response) {
+    console.log("request is send");
     var headers = request.headers;
     var method = request.method;
     var url = request.url;
@@ -29,6 +30,6 @@ server.on('request', function (request, response) {
         response.write(JSON.stringify(responseBody));
         response.end();
     });
-//test
+
 
 }).listen(8088);

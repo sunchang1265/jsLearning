@@ -10,14 +10,14 @@ http.createServer(function (request, response) {
         console.error(err);
     });
     if (request.method === 'GET' && request.url === '/echo') {
-        //    var body = [];
-        //    request.on('data', function(chunk) {
-        //        body.push(chunk);
-        //    }).on('end', function(){
-        //        body = Buffer.concat(body).toString();
-        //        response.end(body);
-        //    });
-        request.pipe(response);
+           var body = [];
+           request.on('data', function(chunk) {
+               body.push(chunk);
+           }).on('end', function(){
+               body = Buffer.concat(body).toString();
+               response.end("data: " + body);
+           });
+        //request.pipe(response);
     } else {
         response.statusCode = 404;
         response.end();
