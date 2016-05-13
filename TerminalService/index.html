@@ -3,61 +3,244 @@
 <html lang="en" ng-app="myApp" ng-controller="formCtrl">
 
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="
-        crossorigin="anonymous"></script>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" ></script>-->
+    <script src="scripts/angular.min.js"></script>
+    <script src="scripts/jquery-2.2.3.js" ></script>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <title></title>
+    <style>
+        @media screen and (max-device-width: 480px) {
+            body{
+                width:480px;
+                
+            }
+            
+        }
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body>
+<header style="background-color: rgb(0, 80, 151)">
+    <img ng-src="../images/secLogo.jpg" height="48px">
+    <label style="color:white; font-size: 24px; margin-left: 15px">Securiport</label>
+</header>
+<div style="width:100%; margin:0 auto;" id="formScope">
+    <div align="center" ng-if="!showDemoGraphic">
+        <h3>Document information</h3>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Document Number: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="resultsObj.TravelDoc.DocumentNumber" ng-value="resultsObj.TravelDoc.DocumentNumber"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Document Country: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="resultsObj.TravelDoc.DocumentCountry" ng-value="resultsObj.TravelDoc.DocumentCountry"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Issue date: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="resultsObj.TravelDoc.DocumentDateOfIssue" ng-value="resultsObj.TravelDoc.DocumentDateOfIssue | date:'yyyy-MM-dd HH:mm:ss'"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Experiatrion date:  </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="resultsObj.TravelDoc.DocumentDateOfExpiration" ng-value="resultsObj.TravelDoc.DocumentDateOfExpiration | date:'yyyy-MM-dd HH:mm:ss'"></div>
+        </div>
+        <br>
+        <div class="row" ng-if="imageData.live">
+            Live: <img ng-src="data:image/bmp;base64,{{imageData.img}}" width="200px">
+        </div>
+        <div class="row" ng-if="imageData.done">
+            Finished Document: <img ng-src="data:image/bmp;base64,{{resultsObj.TravelDoc.DocumentImage}}" width="200px">
+        </div>
+    </div>
+    
+    <div align="center" ng-if="showDemoGraphic">
+        <h3>Demographics</h3>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>First Name: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="enrollObj.Firstname" ng-value="enrollObj.Firstname"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Last Name: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="enrollObj.Lastname" ng-value="enrollObj.Lastname"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Gender: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="enrollObj.Gender" ng-value="enrollObj.Gender"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" align="right"><label>Nationality: </label></div>
+            <div class="col-sm-6" align="left"><input type="text" ng-model="enrollObj.Nationality" ng-value="enrollObj.Nationality" ng-enter="enroll()"></div>
+        </div>
+        <br>
+        <div class="row" ng-if="imageData.done">
+            Finished Document: <img ng-src="data:image/bmp;base64,{{resultsObj.TravelDoc.DocumentImage}}" width="200px">
+        </div>      
+    </div>
+    <br>    
+    <div align="center" ng-if="noData" style="font-size: 24px">Please fill in at least one field</div>
+    <footer style="position: fixed; bottom: 5px; right: 20px">
+        <div class="row">
+            <button class="btn btn-primary" style="width: 150px" ng-click="scan()" ng-if="!showDemoGraphic">Scan</button>
+            <button class="btn btn-primary" style="width: 150px" ng-click="getDemographic()" ng-if="!showDemoGraphic">Next</button>
+            
+            <button class="btn btn-primary" style="width: 150px" ng-click="getDemoInfo()" ng-if="showDemoGraphic">Demo</button>
+            <button class="btn btn-primary" style="width: 150px" ng-click="enroll()" ng-if="showDemoGraphic">Enroll</button>
+        </div>
+    </footer>
+    
+    
 
-    <h3>First Name: </h3>
-    <input type="text" ng-model="enrollObj.Firstname">
-    <h3>Last Name: </h3>
-    <input type="text" ng-model="enrollObj.Lastname">
-    <h3>Gender</h3>
-    <input type="text" name="Gender" ng-model="enrollObj.Gender">
-    <h3>Nationality</h3>
-    <input type="text" name="Nationality" ng-model="enrollObj.Nationality"><br/>
-    <button class="btn btn-default" ng-click="save()">next</button>
-    <button class="btn btn-default" ng-click="enroll()">Enroll</button>
+    <br/><br/>
+    <h3 align="center">{{status}}</h3>
+</div>
     <script>
         var app = angular.module('myApp', []);
-        app.controller('formCtrl', function($scope, $http){
-            $scope.enrollObj = {};
-            $scope.enroll = function(){
-                console.log(JSON.stringify($scope.enrollObj));
-                $http({
-                    method: 'POST',
-                    url: '/enroll',
-                    headers: {
-                        'Content-Type': undefined
-                    },
-                    data: $scope.enrollObj
-                }).then(function successCallback(response){                  
-                    console.log("dataSet: " + JSON.stringify(response.data));
-                }, function errorCallback(reponse){
-                    console.log(response);
-                });
-            };
-            
-             $scope.save = function(){
-                console.log(JSON.stringify($scope.enrollObj));
-                $http({
-                    method: 'POST',
-                    url: '/save',
-                    headers: {
-                        'Content-Type': undefined
-                    },
-                    data: $scope.enrollObj
-                }).then(function successCallback(response){
-                    console.log("data: " + JSON.stringify(response.data));
-                }, function errorCallback(reponse){
-                    console.log(response);
+        app.directive('ngEnter', function() {
+            return function(scope, element, attrs) {
+                element.bind("keydown keypress", function(event) {
+                    if (event.which === 13) {
+                        scope.$apply(function() {
+                            scope.$eval(attrs.ngEnter);
+                        });
+                        event.preventDefault();
+                    }
                 });
             };
         });
+        app.controller('formCtrl', function($scope, $http){
+            $scope.enrollObj = {};
+            $scope.enrollObjDemo = {};
+            $scope.status = "";
+            $scope.imageData = {"lvie": false, "done": false, "img":""};
+            $scope.resultsObj = {};
+            $scope.noData = false;
+            $scope.showDemographic = false; 
+            
+            $scope.enroll = function(){               
+                $scope.noData = false;
+                if(jQuery.isEmptyObject($scope.enrollObj) == false && ($scope.enrollObj.Firstname != "" || $scope.enrollObj.Lastname != "" ||
+                $scope.enrollObj.Gender != "" || $scope.enrollObj.Nationality != "")){
+                    console.log(JSON.stringify($scope.enrollObj));
+                    $http({
+                        method: 'POST',
+                        url: 'http://vsrv141:8088/enroll',
+                        headers: {
+                            'Content-Type': undefined
+                        },
+                        data: $scope.enrollObj
+                    }).then(function successCallback(response){                  
+                        console.log("dataSet: " + JSON.stringify(response.data));
+                        $scope.status = 'Enroll Status: ' + JSON.stringify(response.data);// == 'Success' ? 'Enroll Succeed' : 'Enroll failed';
+                        $scope.enrollObj = {};                       
+                    }, function errorCallback(reponse){
+                        console.log(response);
+                    });
+                } else {
+                    $scope.noData = true;                   
+                }
+                // setTimeout(function(){
+                //     var scope = angular.element($("#formScope")).scope();
+                //     scope.$apply(function () {
+                //         scope.showDemographic = false;
+                //         scope.enrollObj = {};
+                //         scope.status = "";
+                //         scope.imageData = {"lvie": false, "done": false, "img":""};
+                //         scope.resultsObj = {};
+                //         scope.noData = false;
+                //     });
+                    
+                // }, 3000);                           
+            };
+            
+            var support = "MozWebSocket" in window ? 'MozWebSocket' : ("WebSocket" in window ? 'WebSocket' : null);
+            var ws = new window[support]('ws://vsrv140:2012/');
+            ws.binaryType = "arraybuffer";
+            ws.onopen = function (){
+                console.log("Server connected");
+            };
+            ws.onclose = function () {
+                console.log('Connection closed');        
+            }
+            ws.onmessage = function (evt) {               
+                $scope.connected = true;
+                $scope.imageData = {"lvie": false, "done": false, "img":""};
+                if (evt.data instanceof ArrayBuffer) {
+                    var imgData = _arrayBufferToBase64(evt.data);
+                    var scope = angular.element($("#formScope")).scope();
+                    scope.$apply(function () {
+                        scope.imageData.live = true;
+                        scope.imageData.img = imgData;
+                    });
+                } else {
+                    var jsonData = JSON.parse(evt.data);
+                    var scope = angular.element($("#formScope")).scope();
+                    scope.$apply(function () {
+                        scope.imageData.live = false;
+                        scope.imageData.done = true;
+                        scope.resultsObj = JSON.parse(evt.data);
+                        console.log(scope.resultsObj);
+                    });
+                    
+                   
+                }
+            };
+            
+            $scope.scan = function(){
+                if (ws) 
+                    ws.send("");                                                                           
+            };
+            $scope.close = function(){
+                if(ws){
+                    ws.close();
+                    $scope.connected = false;       
+                }                      
+            };
+            
+            $scope.getDemographic = function(){
+                $scope.noData = false;
+                if((jQuery.isEmptyObject($scope.resultsObj) == false) && ($scope.resultsObj.TravelDoc.DocumentNumber != "" || $scope.resultsObj.TravelDoc.DocumentDateOfIssue != "" ||
+                $scope.resultsObj.TravelDoc.DocumentDateOfExpiration != "")){
+                    $http({
+                        method: 'POST',
+                        url: 'http://vsrv141:8088/save',
+                        headers: {
+                            'Content-Type': undefined
+                        },
+                        data: $scope.resultsObj.TravelDoc
+                    }).then(function successCallback(response){   
+                        $scope.showDemoGraphic = true;               
+                        console.log(JSON.stringify(response.data));
+                        $scope.enrollObjDemo = {"Firstname" : "KARPATI", "Lastname" : "VIKTORIA", "Gender" : "Female", "Nationality" : "SGP"};                                              
+                    }, function errorCallback(reponse){
+                        console.log(response);
+                    }); 
+                }else{
+                    $scope.noData = true;
+                }  
+            };
+            
+            $scope.getDemoInfo = function(){
+                $scope.enrollObj = $scope.enrollObjDemo;
+            }
+            
+        });
+        
+        function _arrayBufferToBase64( buffer ) {
+            var binary = '';
+            var bytes = new Uint8Array( buffer );
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode( bytes[ i ] );
+            }
+            //console.log("data:image/bmp;base64," + window.btoa(binary));
+            return window.btoa( binary );
+        }
     </script>
 </body>
 
